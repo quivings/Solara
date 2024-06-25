@@ -1,6 +1,3 @@
--- Made by jLn0n
-
--- services
 local coreGui = game:GetService("CoreGui")
 -- objects
 local camera = workspace.CurrentCamera
@@ -18,6 +15,9 @@ local baseDrawingObj = setmetatable({
 	Transparency = 1,
 	Color = Color3.new(),
 	Remove = function(self)
+		setmetatable(self, nil)
+	end,
+	Destroy = function(self)
 		setmetatable(self, nil)
 	end
 }, {
@@ -49,7 +49,7 @@ local DrawingLib = {}
 DrawingLib.Fonts = {
 	["UI"] = 0,
 	["System"] = 1,
-	["Flex"] = 2,
+	["Plex"] = 2,
 	["Monospace"] = 3
 }
 
@@ -113,7 +113,7 @@ function DrawingLib.new(drawingType)
 				lineObj[index] = value
 			end,
 			__index = function(self, index)
-				if index == "Remove" then
+				if index == "Remove" or index == "Destroy" then
 					return function()
 						lineFrame:Destroy()
 						lineObj.Remove(self)
@@ -121,7 +121,8 @@ function DrawingLib.new(drawingType)
 					end
 				end
 				return lineObj[index]
-			end
+			end,
+			__tostring = function() return "Drawing" end
 		})
 	elseif drawingType == "Text" then
 		local textObj = ({
@@ -180,7 +181,7 @@ function DrawingLib.new(drawingType)
 					local position = (
 						if value then
 							camera.ViewportSize / 2
-						else
+							else
 							textObj.Position
 					)
 
@@ -204,7 +205,7 @@ function DrawingLib.new(drawingType)
 				textObj[index] = value
 			end,
 			__index = function(self, index)
-				if index == "Remove" then
+				if index == "Remove" or index == "Destroy" then
 					return function()
 						textLabel:Destroy()
 						textObj.Remove(self)
@@ -214,7 +215,8 @@ function DrawingLib.new(drawingType)
 					return textLabel.TextBounds
 				end
 				return textObj[index]
-			end
+			end,
+			__tostring = function() return "Drawing" end
 		})
 	elseif drawingType == "Circle" then
 		local circleObj = ({
@@ -273,7 +275,7 @@ function DrawingLib.new(drawingType)
 				circleObj[index] = value
 			end,
 			__index = function(self, index)
-				if index == "Remove" then
+				if index == "Remove" or index == "Destroy" then
 					return function()
 						circleFrame:Destroy()
 						circleObj.Remove(self)
@@ -281,7 +283,8 @@ function DrawingLib.new(drawingType)
 					end
 				end
 				return circleObj[index]
-			end
+			end,
+			__tostring = function() return "Drawing" end
 		})
 	elseif drawingType == "Square" then
 		local squareObj = ({
@@ -335,7 +338,7 @@ function DrawingLib.new(drawingType)
 				squareObj[index] = value
 			end,
 			__index = function(self, index)
-				if index == "Remove" then
+				if index == "Remove" or index == "Destroy" then
 					return function()
 						squareFrame:Destroy()
 						squareObj.Remove(self)
@@ -343,7 +346,8 @@ function DrawingLib.new(drawingType)
 					end
 				end
 				return squareObj[index]
-			end
+			end,
+			__tostring = function() return "Drawing" end
 		})
 	elseif drawingType == "Image" then
 		local imageObj = ({
@@ -389,7 +393,7 @@ function DrawingLib.new(drawingType)
 				imageObj[index] = value
 			end,
 			__index = function(self, index)
-				if index == "Remove" then
+				if index == "Remove" or index == "Destroy" then
 					return function()
 						imageFrame:Destroy()
 						imageObj.Remove(self)
@@ -399,7 +403,8 @@ function DrawingLib.new(drawingType)
 					return nil -- TODO: add error here
 				end
 				return imageObj[index]
-			end
+			end,
+			__tostring = function() return "Drawing" end
 		})
 	elseif drawingType == "Quad" then
 		local quadObj = ({
@@ -442,7 +447,7 @@ function DrawingLib.new(drawingType)
 				quadObj[index] = value
 			end,
 			__index = function(self, index)
-				if index == "Remove" then
+				if index == "Remove" or index == "Destroy" then
 					return function()
 						for _, linePoint in _linePoints do
 							linePoint:Remove()
@@ -453,7 +458,8 @@ function DrawingLib.new(drawingType)
 					end
 				end
 				return quadObj[index]
-			end
+			end,
+			__tostring = function() return "Drawing" end
 		})
 	elseif drawingType == "Triangle" then
 		local triangleObj = ({
@@ -469,6 +475,7 @@ function DrawingLib.new(drawingType)
 		_linePoints.B = DrawingLib.new("Line")
 		_linePoints.C = DrawingLib.new("Line")
 		return setmetatable(table.create(0), {
+			__tostring = function() return "Drawing" end,
 			__newindex = function(_, index, value)
 				if typeof(triangleObj[index]) == "nil" then return end
 
@@ -491,7 +498,7 @@ function DrawingLib.new(drawingType)
 				triangleObj[index] = value
 			end,
 			__index = function(self, index)
-				if index == "Remove" then
+				if index == "Remove" or index == "Destroy" then
 					return function()
 						for _, linePoint in _linePoints do
 							linePoint:Remove()
@@ -502,11 +509,8 @@ function DrawingLib.new(drawingType)
 					end
 				end
 				return triangleObj[index]
-			end
+			end,
+			__tostring = function() return "Drawing" end
 		})
 	end
 end
-
-setreadonly(DrawingLib, true)
-getgenv().Drawing = DrawingLib
-return DrawingLib
