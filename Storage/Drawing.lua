@@ -407,60 +407,79 @@ function DrawingLib.new(drawingType)
 			__tostring = function() return "Drawing" end
 		})
 	elseif drawingType == "Quad" then
-		local quadObj = ({
-			PointA = Vector2.zero,
-			PointB = Vector2.zero,
-			PointC = Vector2.zero,
-			PointD = Vector3.zero,
+		local QuadProperties = ({
 			Thickness = 1,
-			Filled = false
-		} + baseDrawingObj)
+			PointA = Vector2.new();
+			PointB = Vector2.new();
+			PointC = Vector2.new();
+			PointD = Vector2.new();
+			Filled = false;
+		}  + baseDrawingObj);
 
-		local _linePoints = table.create(0)
-		_linePoints.A = DrawingLib.new("Line")
-		_linePoints.B = DrawingLib.new("Line")
-		_linePoints.C = DrawingLib.new("Line")
-		_linePoints.D = DrawingLib.new("Line")
-		return setmetatable(table.create(0), {
-			__newindex = function(_, index, value)
-				if typeof(quadObj[index]) == "nil" then return end
+		local PointA = DrawingLib.new("Line")
+		local PointB = DrawingLib.new("Line")
+		local PointC = DrawingLib.new("Line")
+		local PointD = DrawingLib.new("Line")
 
-				if index == "PointA" then
-					_linePoints.A.From = value
-					_linePoints.B.To = value
-				elseif index == "PointB" then
-					_linePoints.B.From = value
-					_linePoints.C.To = value
-				elseif index == "PointC" then
-					_linePoints.C.From = value
-					_linePoints.D.To = value
-				elseif index == "PointD" then
-					_linePoints.D.From = value
-					_linePoints.A.To = value
-				elseif (index == "Thickness" or index == "Visible" or index == "Color" or index == "ZIndex") then
-					for _, linePoint in _linePoints do
-						linePoint[index] = value
-					end
-				elseif index == "Filled" then
-					-- later
+		return setmetatable({}, {
+			__newindex = (function(self, Property, Value)
+				if Property == "Thickness" then
+					PointA.Thickness = Value
+					PointB.Thickness = Value
+					PointC.Thickness = Value
+					PointD.Thickness = Value
 				end
-				quadObj[index] = value
-			end,
-			__index = function(self, index)
-				if index == "Remove" or index == "Destroy" then
-					return function()
-						for _, linePoint in _linePoints do
-							linePoint:Remove()
-						end
-
-						quadObj.Remove(self)
-						return quadObj:Remove()
-					end
+				if Property == "PointA" then
+					PointA.From = Value
+					PointB.To = Value
 				end
-				return quadObj[index]
-			end,
-			__tostring = function() return "Drawing" end
-		})
+				if Property == "PointB" then
+					PointB.From = Value
+					PointC.To = Value
+				end
+				if Property == "PointC" then
+					PointC.From = Value
+					PointD.To = Value
+				end
+				if Property == "PointD" then
+					PointD.From = Value
+					PointA.To = Value
+				end
+				if Property == "Visible" then 
+					PointA.Visible = true
+					PointB.Visible = true
+					PointC.Visible = true
+					PointD.Visible = true    
+				end
+				if Property == "Filled" then
+					-- i'll do this later
+				end
+				if Property == "Color" then
+					PointA.Color = Value
+					PointB.Color = Value
+					PointC.Color = Value
+					PointD.Color = Value
+				end
+				if (Property == "ZIndex") then
+					PointA.ZIndex = Value
+					PointB.ZIndex = Value
+					PointC.ZIndex = Value
+					PointD.ZIndex = Value
+				end
+			end),
+			__index = (function(self, Property)
+				if (string.lower(tostring(Property)) == "remove") then
+					return (function()
+						PointA:Remove();
+						PointB:Remove();
+						PointC:Remove();
+						PointD:Remove();
+					end)
+				end
+
+				return QuadProperties[Property]
+			end)
+		});
 	elseif drawingType == "Triangle" then
 		local triangleObj = ({
 			PointA = Vector2.zero,
@@ -510,7 +529,6 @@ function DrawingLib.new(drawingType)
 				end
 				return triangleObj[index]
 			end,
-			__tostring = function() return "Drawing" end
 		})
 	end
 end
