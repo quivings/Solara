@@ -532,3 +532,4 @@ function DrawingLib.new(drawingType)
 		})
 	end
 end
+getgenv().Drawing = DrawingLib
