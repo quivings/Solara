@@ -103,7 +103,7 @@ function Drawing.Font.new(FontName, FontData)
 	Drawing.__TEXT_BOUND_PARAMS.Font = FontObject
 	Drawing.__TEXT_BOUND_PARAMS.Width = math.huge
 
-	GetTextBoundsAsync(TextService, Drawing.__TEXT_BOUND_PARAMS) -- Preload/Cache font for GetTextBoundsAsync to avoid yielding across metamethods
+	--GetTextBoundsAsync(TextService, Drawing.__TEXT_BOUND_PARAMS) -- Preload/Cache font for GetTextBoundsAsync to avoid yielding across metamethods -- REMOVED as its erroring "temp read failed"
 
 	Drawing.Font.Enums[FontID] = FontObject
 
@@ -476,7 +476,7 @@ function Text:_UPDATE_TEXT_BOUNDS()
 	Drawing.__TEXT_BOUND_PARAMS.Font = Properties.Font
 	Drawing.__TEXT_BOUND_PARAMS.Width = math.huge
 
-	Properties.TextBounds = GetTextBoundsAsync(TextService, Drawing.__TEXT_BOUND_PARAMS)
+	--Properties.TextBounds = GetTextBoundsAsync(TextService, Drawing.__TEXT_BOUND_PARAMS)
 end
 
 function Text:Remove()
